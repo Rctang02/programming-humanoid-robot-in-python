@@ -21,7 +21,7 @@
 
 
 from pid import PIDAgent
-from keyframes import hello,leftBackToStand
+from keyframes import hello,leftBackToStand,leftBellyToStand,rightBackToStand,rightBellyToStand
 import numpy as np
 from scipy.interpolate import splrep, splev
 
@@ -78,14 +78,15 @@ class AngleInterpolationAgent(PIDAgent):
 
         #calculate the spline interpolation function for all joints
         for index in range(0, x_m.__len__()):
-
+            """
             if x_m[index].size == 2:
                 spl = splrep(x_m[index], y_m[index], k=1)
             elif x_m[index].size == 3:
                 spl = splrep(x_m[index], y_m[index], k=2)
             else:
                 spl = splrep(x_m[index], y_m[index], k=3)
-
+            """
+            spl = splrep(x_m[index], y_m[index], k=1)
             splList.append(spl)
 
         #calculate and save the angles of all joints at the time:perception.time
@@ -96,7 +97,7 @@ class AngleInterpolationAgent(PIDAgent):
                 angleOfJoint = splev(variable, splList[index])
             elif variable < x_m[index].min():
                 variable = x_m[index].min()
-                angleOfJoint = splev(variable, splList[index])
+                angleOfJoint = perception.joint[keyframes[0][index]]
             else:
                 angleOfJoint = splev(variable, splList[index])
             angle_value.append(angleOfJoint)
@@ -113,5 +114,5 @@ class AngleInterpolationAgent(PIDAgent):
 
 if __name__ == '__main__':
     agent = AngleInterpolationAgent()
-    agent.keyframes = leftBackToStand()  # CHANGE DIFFERENT KEYFRAMES
+    agent.keyframes = rightBellyToStand()  # CHANGE DIFFERENT KEYFRAMES
     agent.run()
