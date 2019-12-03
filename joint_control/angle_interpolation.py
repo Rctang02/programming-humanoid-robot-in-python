@@ -67,7 +67,8 @@ class AngleInterpolationAgent(PIDAgent):
 
             # target[keyframes[0][index]] = x.tolist()
 
-            for index2 in range(0, keyframes[2][index].__len__()):
+            for index2,item in enumerate(keyframes[2][index]):
+
                 y = np.append(y, keyframes[2][index][index2][0])
 
             x_m.append(x)
@@ -78,15 +79,15 @@ class AngleInterpolationAgent(PIDAgent):
 
         #calculate the spline interpolation function for all joints
         for index in range(0, x_m.__len__()):
-            """
+
             if x_m[index].size == 2:
                 spl = splrep(x_m[index], y_m[index], k=1)
             elif x_m[index].size == 3:
                 spl = splrep(x_m[index], y_m[index], k=2)
             else:
                 spl = splrep(x_m[index], y_m[index], k=3)
-            """
-            spl = splrep(x_m[index], y_m[index], k=1)
+
+
             splList.append(spl)
 
         #calculate and save the angles of all joints at the time:perception.time
