@@ -91,17 +91,12 @@ class InverseKinematicsAgent(ForwardKinematicsAgent):
                 for i,joint in enumerate(self.chains[key]):
                     times.append([1.0,2.0])
                     keys.append([[0.5*joint_angles[i], [3, 0.0, 0.0], [3, 0.0, 0.0]], [joint_angles[i], [3, 0.0, 0.0], [3, 0.0, 0.0]]])
-
-        '''
-        for i,joint in enumerate(self.chains[key]):
-                    keys.append([joint_angles[i],[3,0.0,0.0],[3,0.0,0.0]])
-                    times.append([1.0])
-            else:
+            elif key == 'RLeg':
                 times = []
-                for i, joint in enumerate(self.chains[key]):
-                    keys.append([joint_angles[i], [3, 0.0, 0.0], [3, 0.0, 0.0]])
-                    times.append([1.0])
-        '''
+                for i,joint in enumerate(self.chains[key]):
+                    times.append([1.0,2.0])
+                    keys.append([[0.5*joint_angles[i], [3, 0.0, 0.0], [3, 0.0, 0.0]], [joint_angles[i], [3, 0.0, 0.0], [3, 0.0, 0.0]]])
+
 
 
 
