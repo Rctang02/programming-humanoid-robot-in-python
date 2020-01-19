@@ -9,6 +9,7 @@
 import weakref
 import threading
 import xmlrpclib
+from keyframes import hello,leftBellyToStand
 
 class PostHandler(object):
     '''the post hander wraps function to be excuted in paralle
@@ -18,13 +19,13 @@ class PostHandler(object):
 
     def execute_keyframes(self, keyframes):
         '''non-blocking call of ClientAgent.execute_keyframes'''
-        exe_keyframe_ = threading.Thread(target=self.proxy.execute_keyframes, args=keyframes)
-        exe_keyframe_.start()
+        self.proxy.server.execute_keyframes(keyframes)
+
 
     def set_transform(self, effector_name, transform):
         '''non-blocking call of ClientAgent.set_transform'''
-        set_transform_ = threading.Thread(target=self.proxy.set_transform, args=[effector_name, transform])
-        set_transform_.start()
+        self.proxy.server.set_transform(effector_name, transform)
+
 
 
 class ClientAgent(object):
@@ -33,7 +34,7 @@ class ClientAgent(object):
     # YOUR CODE HERE
     def __init__(self):
         self.post = PostHandler(self)
-        self.server  = xmlrpclib.ServerProxy("http://localhost:8888")
+        self.server = xmlrpclib.ServerProxy("http://localhost:8888")
 
     def get_angle(self, joint_name):
         '''get sensor value of given joint'''
@@ -66,6 +67,7 @@ class ClientAgent(object):
 
 if __name__ == '__main__':
     agent = ClientAgent()
-    # TEST CODE HERE
-
+    #agent.set_angle('LElbowRoll', -0.86820)
+    posture = agent.get_posture()
+    print posture
 
