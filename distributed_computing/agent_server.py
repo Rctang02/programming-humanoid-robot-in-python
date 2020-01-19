@@ -20,6 +20,8 @@ from inverse_kinematics import InverseKinematicsAgent
 from recognize_posture import PostureRecognitionAgent
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 import xmlrpclib
+import threading
+import numpy as np
 
 
 class ServerAgent(InverseKinematicsAgent, PostureRecognitionAgent):
@@ -28,19 +30,21 @@ class ServerAgent(InverseKinematicsAgent, PostureRecognitionAgent):
     # YOUR CODE HERE
     def __init__(self):
         super(ServerAgent, self).__init__()
-        server = SimpleXMLRPCServer(("localhost", 8888))
-        server.register_function(ServerAgent.get_angle, "get_angle")
-        server.register_function(ServerAgent.set_angle, "set_angle")
-        server.register_function(ServerAgent.get_posture, "get_posture")
-        server.register_function(ServerAgent.execute_keyframes, "execute_keyframes")
-        server.register_function(ServerAgent.get_transform, "get_transform")
-        server.register_function(ServerAgent.set_transform, "set_transform")
-        server.register_instance(agent)
-        server.serve_forever()
+        self.server = SimpleXMLRPCServer(('localhost', 8888),allow_none=True)
+        self.server.register_function(self.get_angle, 'get_angle')
+        self.server.register_function(self.set_angle, 'set_angle')
+        self.server.register_function(self.get_posture, 'get_posture')
+        self.server.register_function(self.execute_keyframes, 'execute_keyframes')
+        self.server.register_function(self.get_transform, 'get_transform')
+        self.server.register_function(self.set_transform, 'set_transform')
+        #self.server.serve_forever()
+        self.thread = threading.Thread(target=self.server.serve_forever)
+        self.thread.start()
+
 
     def get_angle(self, joint_name):
         '''get sensor value of given joint'''
-        return self.perception.joint[joint_name]
+        return self.perception.joint.get(joint_name)
     
     def set_angle(self, joint_name, angle):
         '''set target angle of joint for PID controller
@@ -65,7 +69,7 @@ class ServerAgent(InverseKinematicsAgent, PostureRecognitionAgent):
     def set_transform(self, effector_name, transform):
         '''solve the inverse kinematics and control joints use the results
         '''
-        self.set_transforms(effector_name, transform)
+        self.set_transforms(effector_name, np.matrix(transform))
 
 if __name__ == '__main__':
     agent = ServerAgent()
